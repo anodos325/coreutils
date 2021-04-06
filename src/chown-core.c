@@ -64,6 +64,7 @@ chopt_init (struct Chown_option *chopt)
   chopt->force_silent = false;
   chopt->user_name = NULL;
   chopt->group_name = NULL;
+  chopt->no_xdev = false;
 }
 
 extern void
@@ -294,6 +295,16 @@ change_file_owner (FTS *fts, FTSENT *ent,
               /* Tell fts not to traverse into this hierarchy.  */
               fts_set (fts, ent, FTS_SKIP);
               /* Ensure that we do not process "/" on the second visit.  */
+              ignore_value (fts_read (fts));
+              return false;
+            }
+          if (chopt->no_xdev && (fts->fts_dev != ent->fts_dev))
+            {
+              /*
+               * Tell fts not to traverse into different devices if
+               * no xdev.
+               */
+              fts_set (fts, ent, FTS_SKIP);
               ignore_value (fts_read (fts));
               return false;
             }

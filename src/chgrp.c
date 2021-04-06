@@ -196,7 +196,7 @@ main (int argc, char **argv)
 
   chopt_init (&chopt);
 
-  while ((optc = getopt_long (argc, argv, "HLPRcfhv", long_options, NULL))
+  while ((optc = getopt_long (argc, argv, "HLPRcfhxv", long_options, NULL))
          != -1)
     {
       switch (optc)
@@ -244,6 +244,11 @@ main (int argc, char **argv)
 
         case 'f':
           chopt.force_silent = true;
+          break;
+
+        case 'x': /* Filesystem mountpoints are not crossed.  */
+          bit_flags = FTS_XDEV;
+          chopt.no_xdev = true;
           break;
 
         case 'v':
